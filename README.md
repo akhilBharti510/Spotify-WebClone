@@ -2,7 +2,7 @@
 
 A responsive, interactive music player web application inspired by Spotify’s interface. Built with HTML, CSS, and JavaScript, this project demonstrates front-end skills and dynamic audio handling.
 
-🔗 Live Demo: https://akhilbharti510.github.io/Spotify-WebClone/
+🔗 Live Demo: [Click Here](https://akhilbharti510.github.io/Spotify-WebClone/)
 
 ## Features
 
