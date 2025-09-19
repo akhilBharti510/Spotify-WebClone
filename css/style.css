@@ -189,7 +189,7 @@ body {
   border-radius: 21px;
   color: black;
   font-weight: bold;
-  padding: 8px 20px;
+  padding: 8px 19px;
   cursor: pointer;
   transition: all 0.3s ease;
   border: none;
@@ -209,9 +209,10 @@ body {
   font-weight: bold;
   border: 2px solid rgb(200, 200, 200);
   border-radius: 21px;
-  padding: 8px 20px;
+  padding: 8px 18px;
   cursor: pointer;
   transition: all 0.3s ease;
+  /* display: inline-block; */
 }
 
 .signupbtn:hover {
@@ -477,15 +478,12 @@ body {
   }
 
   .loginbtn {
-    padding: 8px 13px;
-    margin-top: 0;
+    padding: 8px 19px;
+    /* margin-top: 0; */
   }
 
   /* Signup Button */
-  .signupbtn {
-    margin-top: 0;
-    padding: 8px 8px;
-  }
+  
 }
 
 .searchbar input {
@@ -668,5 +666,20 @@ body {
     top: 0;
     width: 100vw;
     height: 100vh;
+  }
+
+  .loginbtn {
+    padding: 8px 18px;
+    /* margin-top: 0; */
+  }
+  .signupbtn{
+    padding: 8px 12px;
+  }
+  .logbutton{
+    margin-top: -14px;
+    margin-left: 27px;
+  }
+  #usernameDisplay{
+    text-align: center;
   }
 }

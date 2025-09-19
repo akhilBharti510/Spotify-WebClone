@@ -244,7 +244,7 @@ function searchSongs(query) {
       <img class="invert" src="./img/music.svg" alt="">
       <div class="info">
         <div>${track}</div>
-        <div>Akhil</div>
+        
       </div>
       <div class="playnow">
         <span>Play Now</span>
@@ -265,7 +265,7 @@ if (searchInput) {
 // Helper Functions
 function showUsername(name) {
   const display = document.getElementById("usernameDisplay");
-  if (display) display.textContent = `Hi, ${name}!`;
+  if (display) display.textContent = `Welcome, ${name}!`;
 }
 
 function showButtons(loginVisible, signupVisible, logoutVisible) {
@@ -409,13 +409,12 @@ document.querySelectorAll(".toggle-password").forEach(el => {
   el.addEventListener("click", () => {
     if (input.type === "password") {
       input.type = "text";
-      eyeOpen.style.display = "none";
-      eyeClosed.style.display = "inline";
-    } else {
-      input.type = "password";
       eyeOpen.style.display = "inline";
       eyeClosed.style.display = "none";
+    } else {
+      input.type = "password";
+      eyeOpen.style.display = "none";
+      eyeClosed.style.display = "inline";
     }
   });
 });
-
