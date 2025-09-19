@@ -368,7 +368,7 @@ loginForm?.addEventListener("submit", (e) => {
     showUsername(enteredUser);
     showButtons(false, false, true);
   } else {
-    alert("Invalid credentials!");
+    alert("User Not Found!\nPlease Sign Up!!!");
   }
 });
 
