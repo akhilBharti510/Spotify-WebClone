@@ -23,9 +23,22 @@
             <img width="120" class="invert" src="./img/logo.svg" alt="logo" />
           </div>
           <ul>
-            <li><img class="invert" src="./img/home.svg" alt="home" />Home</li>
             <li>
-              <img class="invert" src="./img/search.svg" alt="home" />Search
+              <img class="invert" src="./img/home.svg" alt="home" /><a
+                href="#"
+                style="text-decoration: none; color: white"
+                >Home</a
+              >
+            </li>
+            <li>
+              <!-- <img class="invert" src="./img/search.svg" alt="home" />Search -->
+              <div class="searchbar">
+                <input
+                  type="text"
+                  id="songSearch"
+                  placeholder="Search for songs..."
+                />
+              </div>
             </li>
           </ul>
         </div>
@@ -114,9 +127,137 @@
               </svg>
             </div>
           </div>
+          <div id="usernameDisplay"></div>
+
           <div class="buttons">
             <button class="signupbtn">Sign up</button>
             <button class="loginbtn">Log in</button>
+          </div>
+        </div>
+
+        <!-- Login Modal -->
+        <div id="loginModal" class="modal">
+          <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Welcome Back</h2>
+            <p class="subtitle">Log in to continue listening</p>
+            <form id="loginForm">
+              <div class="input-group">
+                <input type="text" id="loginUsername" required />
+                <label>Username</label>
+              </div>
+              <div class="input-group">
+                <input type="password" id="loginPassword" required />
+                <label>Password</label>
+                <span class="toggle-password" toggle="#loginPassword">
+                  <svg
+                    class="eye-open"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                    ></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  <svg
+                    class="eye-closed"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    style="display: none"
+                  >
+                    <path
+                      d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a17.36 17.36 0 0 1 5.06-5.94M1 1l22 22"
+                    ></path>
+                  </svg>
+                  
+                </span>
+              </div>
+
+              <button type="submit">Log In</button>
+            </form>
+            <p class="switch">
+              Don’t have an account? <a id="openSignup">Sign Up</a>
+            </p>
+          </div>
+        </div>
+
+        <!-- Sign Up Modal -->
+        <div id="signupModal" class="modal">
+          <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Create Account</h2>
+            <p class="subtitle">Join and start listening today</p>
+            <form id="signupForm">
+              <div class="input-group">
+                <input type="text" id="signupUsername" required />
+                <label>Username</label>
+              </div>
+
+              <div class="input-group">
+                <input type="email" required />
+                <label>Email</label>
+              </div>
+              <div class="input-group">
+                <input type="password" id="signupPassword" required />
+                <label>Password</label>
+                <span class="toggle-password" toggle="#loginPassword">
+                  <svg
+                    class="eye-open"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                    ></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  <svg
+                    class="eye-closed"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    style="display: none"
+                  >
+                    <path
+                      d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a17.36 17.36 0 0 1 5.06-5.94M1 1l22 22"
+                    ></path>
+                  </svg>
+                </span>
+              </div>
+
+              <button type="submit">Sign Up</button>
+            </form>
+            <p class="switch">
+              Already have an account? <a id="openLogin">Log In</a>
+            </p>
           </div>
         </div>
 

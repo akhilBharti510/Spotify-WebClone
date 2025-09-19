@@ -1,3 +1,4 @@
+// ===================== Music Player =====================
 let currentSong = new Audio();
 let songs = [];
 let currFolder = "";
@@ -52,7 +53,7 @@ async function displayAlbums() {
       card.addEventListener("click", () => {
         songs = data.songs;
         currFolder = `songs/${folder}`;
-        playMusic(songs[0]); // Remove 'true' so it plays automatically
+        playMusic(songs[0]);
         updateSongListUI();
       });
     } catch (err) {
@@ -90,7 +91,6 @@ function updateSongListUI() {
       <img class="invert" src="./img/music.svg" alt="">
       <div class="info">
         <div>${track}</div>
-        <div>Akhil</div>
       </div>
       <div class="playnow">
         <span>Play Now</span>
@@ -109,7 +109,7 @@ function getCurrentTrackName() {
   return decodeURIComponent(currentSong.src.split("/").pop());
 }
 
-// Main
+// ===================== Main =====================
 async function main() {
   // Load first album by default
   try {
@@ -126,6 +126,7 @@ async function main() {
 
   displayAlbums();
 
+  // Play/Pause button
   const playBtn = document.getElementById("play");
   if (playBtn) {
     playBtn.addEventListener("click", () => {
@@ -139,6 +140,7 @@ async function main() {
     });
   }
 
+  // Time update & seekbar
   currentSong.addEventListener("timeupdate", () => {
     const songTime = document.querySelector(".songtime");
     if (songTime)
@@ -153,15 +155,15 @@ async function main() {
       }%`;
   });
 
+  // Auto next song
   currentSong.addEventListener("ended", () => {
-    // Automatically play next song (looping)
     let index = songs.indexOf(getCurrentTrackName());
     if (index === -1) return;
-
-    index = (index + 1) % songs.length; // loop to first track if at end
+    index = (index + 1) % songs.length;
     playMusic(songs[index]);
   });
 
+  // Seekbar click
   const seekbar = document.querySelector(".seekbar");
   if (seekbar) {
     seekbar.addEventListener("click", (e) => {
@@ -170,27 +172,21 @@ async function main() {
     });
   }
 
-  // Previous / Next with loop
+  // Previous / Next buttons
   const previousBtn = document.getElementById("previous");
   const nextBtn = document.getElementById("next");
-
   const playNextPrev = (direction) => {
     let index = songs.indexOf(getCurrentTrackName());
     if (index === -1) return;
-
-    if (direction === "next") {
-      index = (index + 1) % songs.length; // loop back to first track
-    } else {
-      index = (index - 1 + songs.length) % songs.length; // loop back to last track
-    }
+    if (direction === "next") index = (index + 1) % songs.length;
+    else index = (index - 1 + songs.length) % songs.length;
     playMusic(songs[index]);
   };
-
   if (previousBtn)
     previousBtn.addEventListener("click", () => playNextPrev("prev"));
   if (nextBtn) nextBtn.addEventListener("click", () => playNextPrev("next"));
 
-  // Volume
+  // Volume control
   const volumeRange = document.querySelector(".range input");
   const volumeBtn = document.querySelector(".volume>img");
   if (volumeRange) {
@@ -215,22 +211,211 @@ async function main() {
     });
   }
 
-  // Hamburger menu for mobile/tablet
+  // Hamburger menu
   const hamburger = document.querySelector(".hamburger");
   const closeBtn = document.querySelector(".close");
   const leftPanel = document.querySelector(".left");
-
   if (hamburger && leftPanel) {
-    hamburger.addEventListener("click", () => {
-      leftPanel.style.left = "0"; // open menu
-    });
+    hamburger.addEventListener("click", () => (leftPanel.style.left = "0"));
   }
-
   if (closeBtn && leftPanel) {
-    closeBtn.addEventListener("click", () => {
-      leftPanel.style.left = "-120%"; // close menu
-    });
+    closeBtn.addEventListener("click", () => (leftPanel.style.left = "-120%"));
   }
 }
 
 main();
+
+// ===================== Song Search =====================
+function searchSongs(query) {
+  query = query.toLowerCase().trim();
+  if (!query) {
+    updateSongListUI();
+    return;
+  }
+  const filteredSongs = songs.filter((track) =>
+    track.toLowerCase().includes(query)
+  );
+  const ul = document.querySelector(".songList ul");
+  if (!ul) return;
+  ul.innerHTML = "";
+  filteredSongs.forEach((track) => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <img class="invert" src="./img/music.svg" alt="">
+      <div class="info">
+        <div>${track}</div>
+        <div>Akhil</div>
+      </div>
+      <div class="playnow">
+        <span>Play Now</span>
+        <img class="invert" src="./img/play.svg" alt="">
+      </div>
+    `;
+    li.addEventListener("click", () => playMusic(track));
+    ul.appendChild(li);
+  });
+}
+const searchInput = document.getElementById("songSearch");
+if (searchInput) {
+  searchInput.addEventListener("input", (e) => searchSongs(e.target.value));
+}
+
+// ===================== Login / Signup System =====================
+
+// Helper Functions
+function showUsername(name) {
+  const display = document.getElementById("usernameDisplay");
+  if (display) display.textContent = `Hi, ${name}!`;
+}
+
+function showButtons(loginVisible, signupVisible, logoutVisible) {
+  document.querySelector(".loginbtn").style.display = loginVisible
+    ? "inline-block"
+    : "none";
+  document.querySelector(".signupbtn").style.display = signupVisible
+    ? "inline-block"
+    : "none";
+
+  if (!document.querySelector(".logoutbtn")) {
+    const logoutBtn = document.createElement("button");
+    logoutBtn.textContent = "Logout";
+    logoutBtn.classList.add("logoutbtn");
+    logoutBtn.style.marginLeft = "12px";
+    logoutBtn.style.cursor = "pointer";
+    document.querySelector(".buttons").appendChild(logoutBtn);
+
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("loggedInUser");
+      location.reload();
+    });
+  }
+  const logoutBtn = document.querySelector(".logoutbtn");
+  if (logoutBtn)
+    logoutBtn.style.display = logoutVisible ? "inline-block" : "none";
+}
+
+// Users
+function getUsers() {
+  return JSON.parse(localStorage.getItem("users") || "[]");
+}
+
+function saveUser(username, password) {
+  const users = getUsers();
+  users.push({ username, password });
+  localStorage.setItem("users", JSON.stringify(users));
+}
+
+function validateUser(username, password) {
+  const users = getUsers();
+  return users.find((u) => u.username === username && u.password === password);
+}
+
+// Modals
+const loginModal = document.getElementById("loginModal");
+const signupModal = document.getElementById("signupModal");
+const loginBtn = document.querySelector(".loginbtn");
+const signupBtn = document.querySelector(".signupbtn");
+const closeBtns = document.querySelectorAll(".close");
+const openSignup = document.getElementById("openSignup");
+const openLogin = document.getElementById("openLogin");
+
+// Events
+loginBtn?.addEventListener("click", () => (loginModal.style.display = "flex"));
+signupBtn?.addEventListener(
+  "click",
+  () => (signupModal.style.display = "flex")
+);
+closeBtns.forEach((btn) =>
+  btn.addEventListener("click", () => {
+    loginModal.style.display = "none";
+    signupModal.style.display = "none";
+  })
+);
+window.addEventListener("click", (e) => {
+  if (e.target === loginModal) loginModal.style.display = "none";
+  if (e.target === signupModal) signupModal.style.display = "none";
+});
+openSignup?.addEventListener("click", () => {
+  loginModal.style.display = "none";
+  signupModal.style.display = "flex";
+});
+openLogin?.addEventListener("click", () => {
+  signupModal.style.display = "none";
+  loginModal.style.display = "flex";
+});
+
+// Forms
+const signupForm = document.getElementById("signupForm");
+signupForm?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const username = document.getElementById("signupUsername").value;
+  const password = document.getElementById("signupPassword").value;
+  saveUser(username, password);
+  alert("Signup successful! Please login.");
+  signupModal.style.display = "none";
+  loginModal.style.display = "flex";
+});
+
+const loginForm = document.getElementById("loginForm");
+loginForm?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const enteredUser = document.getElementById("loginUsername").value;
+  const enteredPass = document.getElementById("loginPassword").value;
+  const validUser = validateUser(enteredUser, enteredPass);
+  if (validUser) {
+    localStorage.setItem("loggedInUser", enteredUser);
+    loginModal.style.display = "none";
+    showUsername(enteredUser);
+    showButtons(false, false, true);
+  } else {
+    alert("Invalid credentials!");
+  }
+});
+
+// Page Load
+window.addEventListener("load", () => {
+  const loggedInUser = localStorage.getItem("loggedInUser");
+
+  if (loggedInUser) {
+    // User already logged in
+    showUsername(loggedInUser);
+    showButtons(false, false, true);
+  } else {
+    // First-time visitor
+    loginModal.style.display = "flex"; // Show login modal
+    showButtons(true, true, false);
+  }
+});
+
+loginModal.querySelector(".close")?.addEventListener("click", () => {
+  const randomNames = [
+    "Coder101",
+    "TechieX",
+    "AlphaDev",
+    "SkyWalker",
+    "PixelGuy",
+  ];
+  const randomName =
+    randomNames[Math.floor(Math.random() * randomNames.length)];
+  showUsername(randomName);
+});
+
+// Show/Hide Password Toggle
+document.querySelectorAll(".toggle-password").forEach(el => {
+  const input = document.querySelector(el.getAttribute("toggle"));
+  const eyeOpen = el.querySelector(".eye-open");
+  const eyeClosed = el.querySelector(".eye-closed");
+
+  el.addEventListener("click", () => {
+    if (input.type === "password") {
+      input.type = "text";
+      eyeOpen.style.display = "none";
+      eyeClosed.style.display = "inline";
+    } else {
+      input.type = "password";
+      eyeOpen.style.display = "inline";
+      eyeClosed.style.display = "none";
+    }
+  });
+});
+
