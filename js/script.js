@@ -244,7 +244,6 @@ function searchSongs(query) {
       <img class="invert" src="./img/music.svg" alt="">
       <div class="info">
         <div>${track}</div>
-        
       </div>
       <div class="playnow">
         <span>Play Now</span>
@@ -299,15 +298,39 @@ function getUsers() {
   return JSON.parse(localStorage.getItem("users") || "[]");
 }
 
-function saveUser(username, password) {
+// ===================== PASSWORD HASHING =====================
+async function hashPassword(password) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+// Save user with hashed password
+async function saveUser(username, password) {
   const users = getUsers();
-  users.push({ username, password });
+  const hashedPassword = await hashPassword(password);
+  users.push({ username, password: hashedPassword });
   localStorage.setItem("users", JSON.stringify(users));
 }
 
-function validateUser(username, password) {
+// Validate login user with hashed password
+async function validateUser(username, password) {
   const users = getUsers();
-  return users.find((u) => u.username === username && u.password === password);
+  const hashedPassword = await hashPassword(password);
+  return users.find((u) => u.username === username && u.password === hashedPassword);
+}
+
+// ===================== PASSWORD STRENGTH CHECK =====================
+function checkPasswordStrength(password) {
+  const minLength = 6;
+  const hasNumber = /\d/.test(password);
+  const hasSpecial = /[!@#$%^&*]/.test(password);
+  if (password.length < minLength) return false;
+  if (!hasNumber) return false;
+  if (!hasSpecial) return false;
+  return true;
 }
 
 // Modals
@@ -331,10 +354,6 @@ closeBtns.forEach((btn) =>
     signupModal.style.display = "none";
   })
 );
-window.addEventListener("click", (e) => {
-  if (e.target === loginModal) loginModal.style.display = "none";
-  if (e.target === signupModal) signupModal.style.display = "none";
-});
 openSignup?.addEventListener("click", () => {
   loginModal.style.display = "none";
   signupModal.style.display = "flex";
@@ -346,29 +365,38 @@ openLogin?.addEventListener("click", () => {
 
 // Forms
 const signupForm = document.getElementById("signupForm");
-signupForm?.addEventListener("submit", (e) => {
+signupForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const username = document.getElementById("signupUsername").value;
   const password = document.getElementById("signupPassword").value;
-  saveUser(username, password);
+
+  if (!checkPasswordStrength(password)) {
+    alert(
+      "Password must be at least 6 characters long and include a number and a special character (!@#$%^&*)."
+    );
+    return;
+  }
+
+  await saveUser(username, password);
   alert("Signup successful! Please login.");
   signupModal.style.display = "none";
   loginModal.style.display = "flex";
 });
 
 const loginForm = document.getElementById("loginForm");
-loginForm?.addEventListener("submit", (e) => {
+loginForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
   const enteredUser = document.getElementById("loginUsername").value;
   const enteredPass = document.getElementById("loginPassword").value;
-  const validUser = validateUser(enteredUser, enteredPass);
+
+  const validUser = await validateUser(enteredUser, enteredPass);
   if (validUser) {
     localStorage.setItem("loggedInUser", enteredUser);
     loginModal.style.display = "none";
     showUsername(enteredUser);
     showButtons(false, false, true);
   } else {
-    alert("User Not Found!\nPlease Sign Up!!!");
+    alert("Invalid credentials!\nPlease Sign Up if you are new user");
   }
 });
 
@@ -387,21 +415,8 @@ window.addEventListener("load", () => {
   }
 });
 
-loginModal.querySelector(".close")?.addEventListener("click", () => {
-  const randomNames = [
-    "Coder101",
-    "TechieX",
-    "AlphaDev",
-    "SkyWalker",
-    "PixelGuy",
-  ];
-  const randomName =
-    randomNames[Math.floor(Math.random() * randomNames.length)];
-  showUsername(randomName);
-});
-
 // Show/Hide Password Toggle
-document.querySelectorAll(".toggle-password").forEach(el => {
+document.querySelectorAll(".toggle-password").forEach((el) => {
   const input = document.querySelector(el.getAttribute("toggle"));
   const eyeOpen = el.querySelector(".eye-open");
   const eyeClosed = el.querySelector(".eye-closed");
